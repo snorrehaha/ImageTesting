@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "dgSpecHash": "6G4MZmDezv0=",
+  "success": true,
+  "projectFilePath": "/home/snorre/bachelor-test/Image/Image/Image/Image.csproj",
+  "expectedPackageFiles": [
+    "/home/snorre/.nuget/packages/microsoft.win32.systemevents/9.0.1/microsoft.win32.systemevents.9.0.1.nupkg.sha512",
+    "/home/snorre/.nuget/packages/sixlabors.imagesharp/3.1.6/sixlabors.imagesharp.3.1.6.nupkg.sha512",
+    "/home/snorre/.nuget/packages/system.drawing.common/9.0.1/system.drawing.common.9.0.1.nupkg.sha512"
+  ],
+  "logs": []
+}
