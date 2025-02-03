@@ -19,3 +19,4 @@
 /home/snorre/bachelor-test/Image/Image/Image/obj/Debug/net8.0/Image.genruntimeconfig.cache
 /home/snorre/bachelor-test/Image/Image/Image/obj/Debug/net8.0/ref/Image.dll
 /home/snorre/bachelor-test/Image/Image/Image/bin/Debug/net8.0/SixLabors.ImageSharp.dll
+/home/snorre/bachelor-test/Image/Image/Image/obj/Debug/net8.0/Image.sourcelink.json

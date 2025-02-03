@@ -1,4 +1,9 @@
-﻿using SixLabors.ImageSharp;
+﻿using System;
+using System.Collections.Concurrent;
+using System.Diagnostics;
+using System.IO;
+using System.Threading.Tasks;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 
@@ -8,54 +13,70 @@ namespace ImageComparison
     {
         public static void Main(string[] args)
         {
-            List<string> imagePaths = new List<string>
-            {
-                "/home/snorre/bachelor-test/ImageTest/test.jpg",
-                "/home/snorre/bachelor-test/ImageTest/test1.jpeg"
-            };
+            string folder1 = "/home/snorre/bachelor-test/ImageTest/Frame Art"; // First set of images
+            string folder2 = "/home/snorre/bachelor-test/ImageTest/Frame Art"; // Second set of images
 
-            if (imagePaths.Count < 2)
+            var files1 = Directory.GetFiles(folder1);
+            var files2 = Directory.GetFiles(folder2);
+
+            if (files1.Length != files2.Length)
             {
-                Console.WriteLine("Need at least two images to compare.");
+                Console.WriteLine("Folders contain a different number of images!");
                 return;
             }
 
             try
             {
-                // Load images
-                using Image<Rgba32> img1 = Image.Load<Rgba32>(imagePaths[0]);
-                using Image<Rgba32> img2 = Image.Load<Rgba32>(imagePaths[1]);
+                var watch = Stopwatch.StartNew();
 
-                // Resize both images to the same small size (e.g., 100x100)
-                const int commonWidth = 100;
-                const int commonHeight = 100;
-                img1.Mutate(x => x.Resize(commonWidth, commonHeight));
-                img2.Mutate(x => x.Resize(commonWidth, commonHeight));
+                var similarities = new ConcurrentBag<double>(); // Thread-safe collection
+                int imagePairs = files1.Length;
 
-                Console.WriteLine($"Resized images to {commonWidth}x{commonHeight}");
-
-                // Calculate similarity score
-                double totalDifference = 0;
-                const int pixelCount = commonWidth * commonHeight;
-
-                for (var x = 0; x < commonWidth; x++)
+                Parallel.For(0, imagePairs, i =>
                 {
-                    for (var y = 0; y < commonHeight; y++)
+                    using Image<Rgba32> img1 = Image.Load<Rgba32>(files1[i]);
+                    using Image<Rgba32> img2 = Image.Load<Rgba32>(files2[i]);
+
+                    int width = img1.Width;
+                    int height = img1.Height;
+
+                    if (width != img2.Width || height != img2.Height)
                     {
-                        Rgba32 pixel1 = img1[x, y];
-                        Rgba32 pixel2 = img2[x, y];
-
-                        double diff = Math.Abs(pixel1.R - pixel2.R) +
-                                      Math.Abs(pixel1.G - pixel2.G) +
-                                      Math.Abs(pixel1.B - pixel2.B);
-                        totalDifference += diff;
+                        img2.Mutate(x => x.Resize(width, height));
                     }
-                }
 
-                var averageDifference = totalDifference / (pixelCount * 3);
-                var similarity = 100 - (averageDifference / 255 * 100);
+                    double totalDifference = 0;
+                    int pixelCount = width * height;
 
-                Console.WriteLine($"Image similarity score: {similarity:F2}%");
+                    img1.ProcessPixelRows(img2, (rows1, rows2) =>
+                    {
+                        for (int y = 0; y < rows1.Height; y++)
+                        {
+                            Span<Rgba32> row1 = rows1.GetRowSpan(y);
+                            Span<Rgba32> row2 = rows2.GetRowSpan(y);
+
+                            for (int x = 0; x < row1.Length; x++)
+                            {
+                                Rgba32 pixel1 = row1[x];
+                                Rgba32 pixel2 = row2[x];
+
+                                totalDifference += Math.Abs(pixel1.R - pixel2.R) +
+                                                   Math.Abs(pixel1.G - pixel2.G) +
+                                                   Math.Abs(pixel1.B - pixel2.B);
+                            }
+                        }
+                    });
+
+                    double averageDifference = totalDifference / (pixelCount * 3);
+                    double similarity = 100 - (averageDifference / 255 * 100);
+                    similarities.Add(similarity);
+                });
+
+                watch.Stop();
+                double averageSimilarity = similarities.Count > 0 ? similarities.Average() : 0;
+
+                Console.WriteLine($"Total processing time: {watch.ElapsedMilliseconds} ms");
+                Console.WriteLine($"Average similarity: {averageSimilarity:F2}%");
             }
             catch (Exception ex)
             {
