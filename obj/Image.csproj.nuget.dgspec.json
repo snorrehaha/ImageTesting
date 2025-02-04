@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "/home/snorre/bachelor-test/Image/Image/Image/Image.csproj": {}
+    "/home/snorre/bachelor-thesis/ImageTesting/Image.csproj": {}
   },
   "projects": {
-    "/home/snorre/bachelor-test/Image/Image/Image/Image.csproj": {
+    "/home/snorre/bachelor-thesis/ImageTesting/Image.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/home/snorre/bachelor-test/Image/Image/Image/Image.csproj",
+        "projectUniqueName": "/home/snorre/bachelor-thesis/ImageTesting/Image.csproj",
         "projectName": "Image",
-        "projectPath": "/home/snorre/bachelor-test/Image/Image/Image/Image.csproj",
+        "projectPath": "/home/snorre/bachelor-thesis/ImageTesting/Image.csproj",
         "packagesPath": "/home/snorre/.nuget/packages/",
-        "outputPath": "/home/snorre/bachelor-test/Image/Image/Image/obj/",
+        "outputPath": "/home/snorre/bachelor-thesis/ImageTesting/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/home/snorre/.nuget/NuGet/NuGet.Config"
@@ -32,11 +32,6 @@
           "warnAsError": [
             "NU1605"
           ]
-        },
-        "restoreAuditProperties": {
-          "enableAudit": "true",
-          "auditLevel": "low",
-          "auditMode": "direct"
         }
       },
       "frameworks": {
@@ -68,7 +63,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/home/snorre/.dotnet/sdk/8.0.404/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/usr/lib/dotnet/sdk/8.0.112/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
